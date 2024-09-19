@@ -12,8 +12,11 @@ export default function Header(){
             <ul className="flex gap-5 items-center text-white">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/Aboutus">Quem somos</Link></li>
-                <button onClick={() => navigate("/login")} className="bg-secondary px-8 py-2 rounded-md transition-all hover:bg-orange-600">
-                    Entrar
+                <button onClick={() => navigate("/")} className="transition-all">
+                    Sair
+                </button>
+                <button onClick={() => navigate("/")} className="bg-white px-8 py-2 rounded-md transition-all text-secondary">
+                    Anunciar
                 </button>
      
             </ul>

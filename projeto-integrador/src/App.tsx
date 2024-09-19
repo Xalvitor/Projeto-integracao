@@ -1,11 +1,16 @@
 import AboutUs from "./pages/about-us";
+import Dashboard from "./pages/dashboard";
 import Details from "./pages/details";
+import FormProduct from "./pages/form-product";
 import Home from "./pages/home";
 import ListProducts from "./pages/list-products"
+import Login from "./pages/login";
 import NotFound from "./pages/not-found";
+import Register from "./pages/register";
 import SearchProducts from "./pages/search-result";
+import Talkwithus from "./pages/talk-with-us";
+import Userproducts from "./pages/user-products";
 import "./style.css"
-import UserTemplate from "./templates/user-template"
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 
@@ -34,6 +39,30 @@ const router = createBrowserRouter([
   {
     path: "/Aboutus",
     element: <AboutUs/>
+  },
+  {
+    path: "/Login",
+    element: <Login/>
+  },
+  {
+    path: "/Register",
+    element: <Register/>
+  },
+  {
+    path: "/Dashboard",
+    element: <Dashboard/>
+  },
+  {
+    path: "/My-products",
+    element: <Userproducts/>
+  },
+  {
+    path: "/Form-product",
+    element: <FormProduct/>
+  },
+  {
+    path: "/Talk-with-us",
+    element: <Talkwithus/>
   },
   {
     path: "*",
