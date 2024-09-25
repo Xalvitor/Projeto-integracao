@@ -3,7 +3,8 @@ import Dashboard from "./pages/dashboard";
 import Details from "./pages/details";
 import FormProduct from "./pages/form-product";
 import Home from "./pages/home";
-import ListProducts from "./pages/list-products"
+import ListAllProducts from "./pages/list-all-products-order";
+import ListRecentProducts from "./pages/list-recent-products";
 import Login from "./pages/login";
 import NotFound from "./pages/not-found";
 import Register from "./pages/register";
@@ -25,15 +26,19 @@ const router = createBrowserRouter([
     element: <Home/>
   },
   {
-    path: "/products",
-    element: <ListProducts/>
+    path: "/all-recent-products",
+    element: <ListRecentProducts/>
+  },
+  {
+    path: "/all-products",
+    element: <ListAllProducts/>
   },
   {
     path: "/products/details",
     element: <Details/>
   },
   {
-    path: "/products/search",
+    path: "/products/search/:product",
     element: <SearchProducts/>
   },
   {
