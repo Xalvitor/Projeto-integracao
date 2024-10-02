@@ -2,8 +2,9 @@ import AboutUs from "./pages/about-us";
 import Dashboard from "./pages/dashboard";
 import Details from "./pages/details";
 import FormProduct from "./pages/form-product";
+import FormProductEdit from "./pages/form-product-edit";
 import Home from "./pages/home";
-import ListAllProducts from "./pages/list-all-products-order";
+import ListAllProducts from "./pages/list-all-products";
 import ListRecentProducts from "./pages/list-recent-products";
 import Login from "./pages/login";
 import NotFound from "./pages/not-found";
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
     element: <ListAllProducts/>
   },
   {
-    path: "/products/details",
+    path: "/products/details/:id",
     element: <Details/>
   },
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
   {
     path: "/Talk-with-us",
     element: <Talkwithus/>
+  },
+  {
+    path: "/Form-Product-Edit/:id",
+    element: <FormProductEdit/>
   },
   {
     path: "*",

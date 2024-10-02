@@ -2,16 +2,16 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import * as Yup from "yup"
 import {yupResolver} from '@hookform/resolvers/yup'
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AdminTemplate from "../../templates/admin-template";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { ProductForm } from "./types";
-import { registerProduct } from "./services";
+import { editApiProduct } from "./services";
 import { useAuthSessionStore } from "../../hooks/use-auth-session";
-import { getApiMyProducts } from "../user-products/service";
+import { getApiProductById } from "../details/service";
 
 const schemaValidation = Yup.object().shape({
     name:  Yup.string().required("O campo é obrigatório"),
@@ -23,16 +23,51 @@ const schemaValidation = Yup.object().shape({
 
 })
 
-export default function FormProduct(){
+export default function FormProductEdit(){
+    const params = useParams()
+    const id = params?.id || "";
+    const navigate = useNavigate();
+    async function getProductById(){
+        try {
+            const response = await getApiProductById(id)
+            const productResponse = response.data
+            setProduct({
+                price:productResponse.price,
+                category:productResponse.category,
+                url1:productResponse.url1,
+                url2:productResponse.url2,
+                manufacturer:productResponse.manufacturer,
+                name:productResponse.name,
+                description: ""
+            });
+            setQuillValue(productResponse.description)
+        } catch (error) {
+            console.log(id)
+            notificarBusca(error)
+        }
+    }
+    const [product, setProduct] = useState({
+        price: 0,
+        category: "",
+        description : "",
+        manufacturer : "",
+        name : "",
+        url1 : "",
+        url2 : "",
+    })
     const toastId = "custom-id-yes"
-    const navigate = useNavigate()
     const notificar = (message: any) => {
         toast(`Não foi possivél cadastrar, ${message}`,{
             toastId: toastId
         })
     };
-    const cadastrado = () => {
-        toast(`Produto foi cadastrado`,{
+    const notificarBusca = (message: any) => {
+        toast(`Não foi possivél encontra o produto, ${message}`,{
+            toastId: toastId
+        })
+    };
+    const editado = () => {
+        toast(`Produto foi editado`,{
             toastId: toastId
         })
     };
@@ -45,19 +80,27 @@ export default function FormProduct(){
         setValue,
         reset,
         formState: {errors},
-        } = useForm<ProductForm>({resolver:yupResolver(schemaValidation)}); 
+        } = useForm<ProductForm>({resolver:yupResolver(schemaValidation),
+            defaultValues: product,
+            values: product
+        })
+; 
+
+    useEffect(() =>{
+        getProductById();
+    }, [])
 
     useEffect(() =>{
         setValue('description', quillValue);
     }, [quillValue, setValue])
 
-        async function createProduct(values: ProductForm){
+        async function editProduct(values: ProductForm){
             try{  
                 console.log(token)
-                const response = await registerProduct(values, token)
-                cadastrado();
-                reset();
-    
+                const response = await editApiProduct(values, token, id)
+                editado();
+                getProductById();
+
             }catch(error){
                 console.log(token)
                 notificar(error.message);
@@ -67,7 +110,7 @@ export default function FormProduct(){
     return(
         <AdminTemplate>
             <ToastContainer/ >
-            <form onSubmit={handleSubmit(createProduct)}>
+            <form onSubmit={handleSubmit(editProduct)}>
 
                 <h1 className="text-[25px] mb-4">Novo Produto</h1>
                 <div className="flex gap-2">

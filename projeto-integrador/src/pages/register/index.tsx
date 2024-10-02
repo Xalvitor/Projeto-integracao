@@ -3,15 +3,11 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import * as Yup from "yup"
 import {yupResolver} from '@hookform/resolvers/yup'
 import { useNavigate } from "react-router-dom";
+import { RegisterForm } from "./types";
+import { registerUser } from "./services";
+import { toast, ToastContainer } from "react-toastify";
 
-type RegisterForm = {
-    name: string;
-    email: string;
-    phone: string;
-    city: string;
-    state: string;
-    password: string;
-}
+
 
 const schemaValidation = Yup.object().shape({
     name:  Yup.string().required("O campo é obrigatório"),
@@ -23,19 +19,41 @@ const schemaValidation = Yup.object().shape({
 })
 
 export default function Register(){
+    const toastId = "custom-id-yes"
+    const notificar = (message: any) => {
+        toast(`Não foi possivél cadastrar, ${message}`,{
+            toastId: toastId
+        })
+    };
+    const cadastrado = () => {
+        toast(`Usuario foi cadastrado`,{
+            toastId: toastId
+        })
+    };
+
     const {register,
         handleSubmit,
+        reset,
         formState: {errors},
         } = useForm<RegisterForm>({resolver:yupResolver(schemaValidation)}); 
 
-    function createUser(values: RegisterForm){
-        console.log(values);
+    async function createUser(values: RegisterForm){
+        try{  
+            const response = await registerUser(values)
+            cadastrado();
+            reset();
+
+        }catch(error){
+            notificar(error.message);
+        }
     }
 
     const navigate = useNavigate()
 
     return(
         <AuthTemplate>
+                <ToastContainer/ >
+
             <form className="bg-gray-400 p-5 rounded-lg w-[400px] self-center"
             onSubmit={handleSubmit(createUser)}>
                 <h1 className="text-center text-[25px] font-bold ">Unybay</h1>
@@ -115,6 +133,8 @@ export default function Register(){
 
 
                 <button className="mt-4 bg-primary w-full h-[40px] text-white" type="submit">Cadastrar</button>
+
+                <button className="mt-4 w-full h-[40px] text-white" onClick={() => navigate("/login")}>Entrar</button>
 
 
             </form>

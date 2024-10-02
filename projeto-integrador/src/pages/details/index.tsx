@@ -1,56 +1,105 @@
 import { Carousel } from "react-responsive-carousel";
-
-import Carousel1 from "../../assets/carousel1.jpg";
 import UserTemplate from "../../templates/user-template";
+import { useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { getApiProductById } from "./service";
+import { useEffect, useState } from "react";
+import { Product } from "./types";
+import ProductLoading from "../../components/product-loading";
+import { formatPrice } from "../../utils/format-price";
+import { EasyZoomOnHover } from "easy-magnify";
+import { EasyZoomOnMove } from "easy-magnify";
+
 export default function Details(){
+    const toastId = "custom-id-yes"
+
+    const notificar = (message: any) => {
+        toast(`Ocorreu um erro ao buscar o produto! ${message}`,{
+            toastId: toastId
+        })
+    };
+    
+    const params = useParams();
+    const id = params?.id
+    async function getDetailsProduct(){
+        try {
+            const response = await getApiProductById(id || "")
+            setProduct(response.data)
+            setLoadingProducts(false)
+        } catch (error) {
+            notificar(error)
+        }
+    }
+
+    const [product, setProduct] = useState<Product>({} as Product )
+    useEffect(() =>{
+        getDetailsProduct();
+        setLoadingProducts(true)
+
+    }, [])
+
+    const [isloadingProducts, setLoadingProducts] = useState(false);
+
     return(
         <UserTemplate>
+            <ToastContainer/ >
+            <EasyZoomOnMove image={{
+    src: "https://m.media-amazon.com/images/I/61vThyaOrHL._AC_SX466_.jpg",
+    alt: "My Product",
+    width: 466,
+    height: 466
+}}
+    zoomImage={{
+        src: "https://m.media-amazon.com/images/I/61vThyaOrHL._AC_SX1500_.jpg",
+        alt: "My Product",
+    }}
+
+/>
+            {isloadingProducts &&< ProductLoading />}
 
             <h1>Details</h1>
-            <p className="text-[30px]">Echo Dot (8ª Geração)</p>
+            <p className="text-[30px]">{product.name}</p>
             <div className="flex mt-10 gap-10 justify-center">
-                <div className="w-[40%]">
+                <div className="w-[80%]">
                     <Carousel showThumbs={false} autoPlay={true} infiniteloop={true} interval={5000}>
                         <div>
-                            <img src={Carousel1} style={{width: '100%', height: 'auto', objectFit: 'cover'}}/>
+
+                        <EasyZoomOnHover
+                                mainImage={{
+                                    src: product.url1,
+                                    alt: "My Product"
+                                }}
+                                zoomImage={{
+                                    src: product.url1,
+                                    alt: "My Product Zoom"
+                                }}></EasyZoomOnHover>
+
                         </div>
                         <div>
-                            <img src={Carousel1} hstyle={{width: '100%', height: 'auto',  objectFit: 'cover'}} />
-                        </div>
-                        <div>
-                            <img src={Carousel1} style={{width: '100%', height: 'auto'}}/>
+                            <img src={product.url2}/>
                         </div>
                     </Carousel>
                 </div>
 
                 <div className="shadow-sm bg-white px-10 py-2">
                     <p>Informações do vendedor</p>
-                    <p>Nome do vendedor</p>
-                    <p>Cidade do vendedor</p>
-                    <p>E-mail</p>
-                    <p>Número de telefone</p>
+                    <p>{product.user?.name || ""}</p>
+                    <p>{product.user?.city || ""}</p>
+                    <p>{product.user?.state || ""}</p>
+                    <p>{product.user?.email || ""}</p>
+                    <p>{product.user?.phone || ""}</p>
                 </div>
 
                 <div className="shadow-sm bg-white px-10 py-2">
-                    <p className="text-[30px]">R$ 799,00</p>
+                    <p className="text-[30px]">{formatPrice(product.price)}</p>
                 </div>
             </div> 
             <div>
                 <h3 className="mt-10 text-[20px]">Detalhes do produto</h3>
-                <p className="mt-3">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id finibus ante. Sed sit amet felis eget quam gravida mattis sit amet non dolor.
-                Quisque quis risus pretium, auctor enim ut, molestie lorem. Proin dignissim dolor nec sapien consequat finibus. Fusce dignissim porttitor diam vel egestas.
-                Maecenas vulputate sapien ex, ut pharetra orci fringilla sit amet. Quisque mauris nisi, commodo id mauris tincidunt, dictum laoreet ligula. Proin orci risus,
-                eleifend at pretium non, tempor quis est. Maecenas nec nunc in sapien sollicitudin varius ac ut magna. Aliquam erat volutpat. Sed posuere, nulla ac pellentesque
-                tempus, nulla dui rhoncus purus, a ultrices felis arcu semper urna. Proin vitae nibh mi. Nunc maximus, risus lobortis placerat iaculis, dolor nunc scelerisque nibh,
-                sed finibus eros urna nec libero. Donec tempor elit id lectus volutpat, vitae vulputate dolor semper.
-                </p>
-                <p className="mt-10">
-                Nam in ante augue. Suspendisse a tincidunt magna, sed finibus libero. In dignissim porttitor magna, sed interdum ipsum maximus id. Mauris ac nunc elit.
-                Etiam in metus ut tellus eleifend gravida. Nam luctus ligula quis lacus interdum suscipit. Curabitur pharetra mauris dolor. Nunc ultricies elementum tristique.
-                Proin vehicula venenatis luctus. Mauris vel interdum quam. Nunc ac dolor quis magna rhoncus hendrerit nec id ex. Vestibulum tempor enim nec metus placerat pharetra.
-                Aenean sagittis iaculis blandit. Sed sit amet porta tellus. Suspendisse vitae ligula a felis dignissim luctus at ut nulla.
-                </p>
+                <div dangerouslySetInnerHTML={{__html:product.description}}>
+                    {}
+
+                </div>
             </div>
         </UserTemplate>
         

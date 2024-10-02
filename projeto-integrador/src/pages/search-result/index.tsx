@@ -47,11 +47,14 @@ export default function SearchProducts(){
             {isloadingProducts &&< ListLoading/>}
             <div className="grid grid-4 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2">
             {allProducts.map((product) =>(
-                <CardProduct key={product._id} 
+                <CardProduct 
+                key={product._id} 
+                id={product._id}
                 name={product.name}
                 img={product.url1}
                 manufacturer={product.manufacturer}
-                price={product.price}/>
+                price={product.price}
+                />
             ))
             }
             <p>Total: {allProducts.length}</p>

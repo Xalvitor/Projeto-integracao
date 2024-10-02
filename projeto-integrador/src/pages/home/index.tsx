@@ -17,6 +17,7 @@ import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AxiosError, HttpStatusCode, isAxiosError } from "axios";
+import { useAuthSessionStore } from "../../hooks/use-auth-session";
 
 const itemsCategoy = [
     {
@@ -63,7 +64,12 @@ export default function Home(){
             toastId: toastId
         })
     };
-
+    const {token} = useAuthSessionStore()
+    useEffect(() =>{
+        if(token){
+            navigate("/dashboard")
+        }
+    })
 
     const navigate = useNavigate()  
 
@@ -142,10 +148,12 @@ export default function Home(){
                         recentProducts.map((product) => (
                             <CardProduct
                             key ={product._id}
+                            id={product._id}
                             name={product.name}
                             img={product.url1}
                             manufacturer={product.manufacturer}
                             price={product.price}
+                            
                             />
                         ))
                     
@@ -181,6 +189,7 @@ export default function Home(){
                     recommendedProducts.map((product) => (
                         <CardProduct
                         key ={product._id}
+                        id={product._id}
                         name={product.name}
                         img={product.url1}
                         manufacturer={product.manufacturer}

@@ -3,11 +3,10 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import * as Yup from "yup"
 import {yupResolver} from '@hookform/resolvers/yup'
 import { useNavigate } from "react-router-dom";
-
-type LoginForm = {
-    email: string;
-    password: string;
-}
+import { auth } from "./services";
+import { LoginForm } from "./types";
+import { toast, ToastContainer } from "react-toastify";
+import { useAuthSessionStore } from "../../hooks/use-auth-session";
 
 const schemaValidation = Yup.object().shape({
     email: Yup.string().email("Digite um e-mail válido").required("O campo é obrigatório"),
@@ -15,19 +14,32 @@ const schemaValidation = Yup.object().shape({
 })
 
 export default function Login(){
+    const {setToken} = useAuthSessionStore()
+    const toastId = "custom-id-yes"
+    const notificar = (message: any) => {
+        toast(`Erro ao logar, ${message}`,{
+            toastId: toastId
+        })
+    };
     const {register,
         handleSubmit,
         formState: {errors},
         } = useForm<LoginForm>({resolver:yupResolver(schemaValidation)}); 
 
-    function logar(values: LoginForm){
-        console.log(values);
+    async function logar(values: LoginForm){
+        try{  
+            const response = await auth(values.email, values.password)
+            navigate("/dashboard")
+            setToken(response.data?.token)
+        }catch(error){
+            notificar(error.message);
+        }
     }
-
     const navigate = useNavigate()
 
     return(
         <AuthTemplate>
+              <ToastContainer/ >
             <form className="bg-gray-400 p-5 rounded-lg w-[400px] self-center"
             onSubmit={handleSubmit(logar)}>
                 <h1 className="text-center text-[25px] font-bold ">Unybay</h1>

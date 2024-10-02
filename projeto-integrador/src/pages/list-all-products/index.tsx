@@ -61,6 +61,7 @@ export default function ListAllProducts(){
                     allProducts.map((product) => (
                         <CardProduct
                         name={product.name}
+                        id={product._id}
                         img={product.url1}
                         manufacturer={product.manufacturer}
                         price={product.price}
