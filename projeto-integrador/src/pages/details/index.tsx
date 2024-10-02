@@ -6,10 +6,6 @@ import { getApiProductById } from "./service";
 import { useEffect, useState } from "react";
 import { Product } from "./types";
 import ProductLoading from "../../components/product-loading";
-import { formatPrice } from "../../utils/format-price";
-import { EasyZoomOnHover } from "easy-magnify";
-import { EasyZoomOnMove } from "easy-magnify";
-
 export default function Details(){
     const toastId = "custom-id-yes"
 
@@ -43,37 +39,15 @@ export default function Details(){
     return(
         <UserTemplate>
             <ToastContainer/ >
-            <EasyZoomOnMove image={{
-    src: "https://m.media-amazon.com/images/I/61vThyaOrHL._AC_SX466_.jpg",
-    alt: "My Product",
-    width: 466,
-    height: 466
-}}
-    zoomImage={{
-        src: "https://m.media-amazon.com/images/I/61vThyaOrHL._AC_SX1500_.jpg",
-        alt: "My Product",
-    }}
-
-/>
             {isloadingProducts &&< ProductLoading />}
 
             <h1>Details</h1>
             <p className="text-[30px]">{product.name}</p>
             <div className="flex mt-10 gap-10 justify-center">
-                <div className="w-[80%]">
+                <div className="w-[40%]">
                     <Carousel showThumbs={false} autoPlay={true} infiniteloop={true} interval={5000}>
                         <div>
-
-                        <EasyZoomOnHover
-                                mainImage={{
-                                    src: product.url1,
-                                    alt: "My Product"
-                                }}
-                                zoomImage={{
-                                    src: product.url1,
-                                    alt: "My Product Zoom"
-                                }}></EasyZoomOnHover>
-
+                            <img src={product.url1}/>
                         </div>
                         <div>
                             <img src={product.url2}/>
@@ -83,15 +57,15 @@ export default function Details(){
 
                 <div className="shadow-sm bg-white px-10 py-2">
                     <p>Informações do vendedor</p>
-                    <p>{product.user?.name || ""}</p>
-                    <p>{product.user?.city || ""}</p>
-                    <p>{product.user?.state || ""}</p>
-                    <p>{product.user?.email || ""}</p>
-                    <p>{product.user?.phone || ""}</p>
+                    <p>{product.user.name}</p>
+                    <p>{product.user.city}</p>
+                    <p>{product.user.state}</p>
+                    <p>{product.user.email}</p>
+                    <p>{product.user.phone}</p>
                 </div>
 
                 <div className="shadow-sm bg-white px-10 py-2">
-                    <p className="text-[30px]">{formatPrice(product.price)}</p>
+                    <p className="text-[30px]">R$ {product.price}</p>
                 </div>
             </div> 
             <div>
