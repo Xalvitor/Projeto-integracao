@@ -8,3 +8,8 @@ export type Product = {
     url2: string;
     description: string;
 }
+
+export type Item = {
+    id: number;
+    name: string;
+}

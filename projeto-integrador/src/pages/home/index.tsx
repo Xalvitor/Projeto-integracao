@@ -10,7 +10,7 @@ import UserTemplate from "../../templates/user-template";
 import { Link, useNavigate } from "react-router-dom";
 import { getApiRecentProducts, getApiRecommendedProducts } from "./services";
 import { useEffect, useState } from "react";
-import { Product } from "./types";
+import { Item, Product } from "./types";
 import ListLoading from "../../components/list-loading";
 import React from 'react';
 
@@ -18,6 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AxiosError, HttpStatusCode, isAxiosError } from "axios";
 import { useAuthSessionStore } from "../../hooks/use-auth-session";
+import { ReactSearchAutocomplete } from "react-search-autocomplete";
 
 const itemsCategoy = [
     {
@@ -56,6 +57,39 @@ const itemsCategoy = [
         icon: <AiOutlineSync size={30} color="#555"/>
     },
 ]
+const items = [
+    {
+        id: 0,
+        name: "Camisa",
+        icon: <LuGamepad2  size={30} color="#555"/>
+    },
+    {
+        id: 1,
+        name: "Fifa",
+        icon: <GiClothes size={30} color="#555"/>
+    },
+    {
+        id: 2,
+        name: "Game",
+        icon: <AiFillCar size={30} color="#555"/>
+    },
+    {
+        id: 4,
+        name: "Caneca",
+        icon: <FaTools size={30} color="#555"/>
+    },
+    {
+        id: 5,
+        name: "Snickers",
+        icon: <IoFastFoodOutline size={30} color="#555"/>
+    },
+    {
+        id: 5,
+        name: "Furadeira",
+        icon: <AiOutlineGift size={30} color="#555"/>
+    },
+]
+
 export default function Home(){
 
     const toastId = "custom-id-yes"
@@ -73,6 +107,9 @@ export default function Home(){
 
     const navigate = useNavigate()  
 
+    const handleOnSelect = (item: any) => {
+        navigate(`/products/search/${item.name}`) 
+    }
     const [recentProducts, setRecentProducts] = useState<Product[]>([])
     const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([])
 
@@ -117,6 +154,7 @@ export default function Home(){
     }, [])
     return(
       <UserTemplate>
+
                 <ToastContainer/ >
             <div className="max-w-[70%] self-center mx-auto">
                 <Carousel showThumbs={false} autoPlay={true} infiniteloop={true} interval={5000}>
@@ -130,14 +168,15 @@ export default function Home(){
                         <img src={carousel1} style={{width: '100%', height: 'auto'}}/>
                     </div>
                 </Carousel>
-                <div className="flex flex-row h-[45px] rounded-md border-2 items-center mt-10">
-                <input className="flex-1 h-full p-3" placeholder="Estou buscando por..."
-                onChange={(event) => setInputSearch(event.target.value)}/>
-                <button onClick={() => navigate(`/products/search/${inputSearch}`)} className="px-4">
-                    <IoSearch size={30}/>
-                </button>
 
-            </div>
+            <ReactSearchAutocomplete<Item>
+            items={items}
+            maxResults={2}
+            onSelect={handleOnSelect}
+            fuseOptions={{ keys: ["name", "description"] }} // Search in the description text as well
+            styling={{ zIndex: 3 }} // To display it on top of the search box below
+          />
+
             </div>
 
             <h2 className="mt-[50px]">Itens recentes</h2>
